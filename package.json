@@ -39,6 +39,14 @@
       "js",
       "jsx"
     ],
+    "moduleDirectories": [
+      "client/src",
+      "node_modules",
+      "../admin/client/src",
+      "../admin/node_modules",
+      "vendor/silverstripe/admin/client/src",
+      "vendor/silverstripe/admin/node_modules"
+    ],
     "modulePaths": [
       "client/src",
       "node_modules",
@@ -56,7 +64,7 @@
     },
     "globals": {
       "ts-jest": {
-        "tsConfig": "node_modules/@silverstripe/webpack-config/tsconfig.json"
+        "tsConfig": "tsconfig.json"
       }
     }
   },
@@ -66,10 +74,20 @@
     "@storybook/addon-actions": "^3.4.11",
     "@storybook/addons": "^3.4.11",
     "@storybook/react": "^3.4.11",
+    "@types/classnames": "^2.2.10",
+    "@types/enzyme": "^3.10.5",
+    "@types/enzyme-adapter-react-16": "^1.0.6",
+    "@types/griddle-react": "^0.7.3",
+    "@types/jest": "^25.1.4",
+    "@types/react": "^16.6.1",
+    "@types/react-redux": "^7.1.7",
     "babel-jest": "^23.6.0",
-    "enzyme": "^3.6.0",
-    "enzyme-adapter-react-16": "^1.5.0",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.2",
+    "jest": "^25.1.0",
     "jest-cli": "^23.6.0",
+    "react-test-renderer": "^16.13.0",
+    "ts-loader": "^3.5",
     "typescript": "^3.8.3",
     "webpack": "^2.6.0"
   },

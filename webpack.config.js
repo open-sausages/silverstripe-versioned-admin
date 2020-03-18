@@ -22,7 +22,7 @@ const config = [
   {
     name: 'js',
     entry: {
-      bundle: `${PATHS.SRC}/bundles/bundle.js`,
+      bundle: `${PATHS.SRC}/bundles/bundle.ts`,
     },
     output: {
       path: PATHS.DIST,

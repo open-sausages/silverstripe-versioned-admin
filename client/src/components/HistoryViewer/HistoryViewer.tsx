@@ -13,20 +13,56 @@ import {
   showVersion,
   clearMessages,
 } from 'state/historyviewer/HistoryViewerActions';
-import { versionType } from 'types/versionType';
-import { compareType } from 'types/compareType';
+import { versionType, Version } from 'types/versionType';
+import {Compare, compareType} from 'types/compareType';
 import classNames from 'classnames';
 import ResizeAware from 'components/ResizeAware/ResizeAware';
 import * as viewModeActions from 'state/viewMode/ViewModeActions';
 import PropTypes from 'prop-types';
+import {GraphQLResultSet} from "../../types/GraphQLResultSet";
+
+
+export interface Props {
+    contextKey?: string,
+    limit?: number,
+    ListComponent: React.ReactNode,
+    offset?: number,
+    recordId: number,
+    currentVersion: Version,
+    compare?: Compare,
+    isInGridField?: boolean,
+    isPreviewable?: boolean,
+    VersionDetailComponent: React.ReactNode,
+    CompareWarningComponent: React.ReactNode,
+    versions: {
+        Versions: GraphQLResultSet<Version>,
+    },
+    page: number,
+    schemaUrl: string,
+    previewState?: 'edit'|'preview'|'split',
+    actions?: {
+        versions: {
+            goToPage?: (page: number) => void
+        }
+    },
+    onSelect?: (page: number) => void,
+    onSetPage?: (page: number) => void,
+    onResize: (page: number) => void,
+    recordClass: string
+};
+
+interface replacementExpression {
+
+}
 
 /**
  * The HistoryViewer component is abstract, and requires an Injector component
  * to be connected providing the GraphQL query implementation for the appropriate
  * DataObject type
  */
-class HistoryViewer extends Component {
-  constructor(props) {
+class HistoryViewer extends Component<Props, {}, any> {
+
+  constructor(props: Props) {
     super(props);
 
     this.handleSetPage = this.handleSetPage.bind(this);
@@ -40,7 +76,7 @@ class HistoryViewer extends Component {
    *
    * @param {object} prevProps
    */
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props) {
     if (!this.props.actions || !this.props.actions.versions) {
       return;
     }
@@ -49,7 +85,7 @@ class HistoryViewer extends Component {
     const { page: currentPage } = this.props;
     const { actions: { versions } } = this.props;
 
-    if (prevPage !== currentPage && typeof versions.goToPage === 'function') {
+    if (currentPage && prevPage !== currentPage && typeof versions.goToPage === 'function') {
       versions.goToPage(currentPage);
     }
   }
@@ -70,7 +106,7 @@ class HistoryViewer extends Component {
    *
    * @returns {Array}
    */
-  getVersions() {
+  getVersions(): Version[] {
     const { versions } = this.props;
     const edges = (versions && versions.Versions && versions.Versions.edges)
       ? versions.Versions.edges
@@ -154,7 +190,7 @@ class HistoryViewer extends Component {
    *
    * @param {number} page
    */
-  handleSetPage(page) {
+  handleSetPage(page: number) {
     const { onSetPage } = this.props;
     if (typeof onSetPage === 'function') {
       // Note: data from Griddle is zero-indexed
@@ -208,26 +244,28 @@ class HistoryViewer extends Component {
       schemaUrl,
       VersionDetailComponent,
       compare,
-      compare: { versionFrom = false, versionTo = false },
       previewState,
     } = this.props;
 
+    const versionFrom = compare && compare.versionFrom;
+    const versionTo = compare && compare.versionTo;
+
     // Insert variables into the schema URL via regex replacements
-    const schemaVersionReplacements = {
-      ':id': recordId,
+    const schemaVersionReplacements: {[key: string]: string}  = {
+      ':id': recordId.toString(),
       ':class': recordClass,
-      ':version': currentVersion.Version,
+      ':version': currentVersion.Version.toString(),
     };
-    const schemaCompareReplacements = {
-      ':id': recordId,
+    const schemaCompareReplacements: {[key: string]: string} = {
+      ':id': recordId.toString(),
       ':class': recordClass,
-      ':from': versionFrom.Version || 0,
-      ':to': versionTo.Version || 0,
+      ':from': (versionFrom && versionFrom.Version || 0).toString(),
+      ':to': (versionTo && versionTo.Version || 0).toString(),
     };
     const schemaSearch = compare ? /:id|:class|:from|:to/g : /:id|:class|:version/g;
     const schemaReplacements = compare ? schemaCompareReplacements : schemaVersionReplacements;
 
-    const version = compare ? versionFrom : currentVersion;
+    const version = versionFrom || currentVersion;
     const latestVersion = this.getLatestVersion();
 
     const props = {
@@ -235,7 +273,7 @@ class HistoryViewer extends Component {
       isLatestVersion: !compare && latestVersion && latestVersion.Version === version.Version,
       isPreviewable,
       recordId,
-      schemaUrl: schemaUrl.replace(schemaSearch, (match) => schemaReplacements[match]),
+      schemaUrl: schemaUrl.replace(schemaSearch, (match) => (schemaReplacements[match])),
       version,
       compare,
       compareModeAvailable: this.compareModeAvailable(),
@@ -245,7 +283,7 @@ class HistoryViewer extends Component {
     return (
       <ResizeAware
         className={this.getContainerClasses()}
-        onResize={({ width }) => this.props.onResize(width)}
+        onResize={({ width }: {width: number}) => this.props.onResize(width)}
       >
         <VersionDetailComponent {...props} />
       </ResizeAware>

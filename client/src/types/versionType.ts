@@ -6,6 +6,11 @@ const memberShape = PropTypes.shape({
   Surname: PropTypes.string,
 });
 
+export interface Member {
+    FirstName?: string,
+    Surname?: string
+}
+
 // Describes the data structure for a Version, returned via GraphQL scaffolding
 const versionType = PropTypes.shape({
   Version: PropTypes.number,
@@ -17,6 +22,17 @@ const versionType = PropTypes.shape({
   Publisher: memberShape,
   Author: memberShape,
 });
+
+interface Version {
+    Version: number,
+    AbsoluteLink?: string,
+    LastEdited?: string,
+    Published?: boolean,
+    LiveVersion?: boolean,
+    LatestDraftVersion?: boolean,
+    Publisher?: Member|null,
+    Author?: Member|null,
+}
 
 // A default (empty) data set for a version
 const defaultVersion = {
@@ -36,4 +52,4 @@ const defaultVersion = {
   },
 };
 
-export { versionType, defaultVersion };
+export { versionType, defaultVersion, Version };

@@ -16,7 +16,7 @@ const initialState = {
  * @param {string} type - Name of the dispatched action.
  * @param {object} payload - Optional data passed with the action.
  */
-export default function historyViewerReducer(state = initialState, { type, payload } = {}) {
+export default function historyViewerReducer(state = initialState, { type, payload }) {
   switch (type) {
     case HISTORY_VIEWER.SET_CURRENT_PAGE: {
       return {

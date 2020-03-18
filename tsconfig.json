@@ -1,0 +1,17 @@
+{
+  "extends": "./node_modules/@silverstripe/webpack-config/tsconfig.json",
+  "compilerOptions": {
+    "paths" : {
+      "*" : [
+        "client/src/*",
+        "../admin/client/src/*",
+      ]
+    },
+    "strict": true
+  },
+  "exclude": [
+    "node_modules",
+    "../admin/client/src",
+  ]
+
+}
